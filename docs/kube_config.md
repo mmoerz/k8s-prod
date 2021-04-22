@@ -1,9 +1,29 @@
 # Installation
 
-I used the example provided with clearlinux for installing kubernetes, which
-resides at /usr/share/clr-k8s-examples/.
+Initially I tried to use the example provided with clearlinux for 
+installing kubernetes, which resides at /usr/share/clr-k8s-examples/.
+They are nice and give good hints, however a full blown production setup is
+not possible out of the box with them. That lead to my decission to make
+my own solution.
+
+## configuration
+
+## distribution of tar archives
+Utilize ```./bin/scp_to [ip|dns name of master node]``` to generate a tar
+archive containing the configuration and the scripts to setup the cluster.
+The tar archive can contain a clr-installer.yaml configuration file which
+may be utilized to automate the clearlinux installation.
+
+
+## running the scripts
+- 00- scripts contain post clearlinux installation setup routines. They are
+ment to be run right after clr-installer before reboot.
+
+
 
 ## pre install configuration
+
+
 In the subdirectory 6-metal-lb/overlays/v0.8.3 the file 
 patch_configmap.yaml contains the network configuration for the (bare)metal 
 load balancer. I changed the IP adresses to reflect my network configuration.

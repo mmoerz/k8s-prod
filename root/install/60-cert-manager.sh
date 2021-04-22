@@ -49,40 +49,6 @@ echo "cn: $COMMON_NAME"
 # Create a self signed Certificate, valid for 10yrs with the 'signing' option set
 #openssl req -x509 -new -nodes -key ca.key -subj "/CN=${COMMON_NAME}" -days 3650 -reqexts v3_req -extensions v3_ca -out ca.crt
 
-cat > certmanager/selfsignedCA.yaml <<EOF
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: selfsigned-issuer
-spec:
-  selfSigned: {}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: natoka-ca
-  namespace: sandbox
-spec:
-  isCA: true
-  commonName: natoka-system
-  secretName: natoka-ca
-  issuerRef:
-    name: selfsigned-issuer
-    kind: ClusterIssuer
-    group: cert-manager.io
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: natoka-ca
-  namespace: sandbox
-spec:
-  ca:
-    secretName: natoka-ca
-EOF
-
-kubectl apply -f certmanager/selfsignedCA.yaml
-
 if [ ! -f /usr/local/bin/kubectl-cert-manager ] ; then
   echo "installing kubectl plugin"
   curl -L -o kubectl-cert-manager.tar.gz https://github.com/jetstack/cert-manager/releases/download/v1.3.0/kubectl-cert_manager-linux-amd64.tar.gz

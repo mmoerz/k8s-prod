@@ -2,43 +2,27 @@
 
 [Kubernetes HA](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/#manual-certs)
 
+Apparently this needs a load balancer. I've decided to go with kube-vib as the
+loadbalancer. For my setup it gives several positives:
 
+  * Provides VIP and load balancing
+  * can be used for lb within the cluster aswell (no need for e.g. metallb)
+  * (easy to setup)
 
-The following Hint was [provided](https://www.reddit.com/r/kubernetes/comments/kwj1jx/adding_additional_master_nodes_to_an_existing/) at reddit.
+The loadbalancer would need to be started before kubeadm init 
+(obviously otherwise who should provide the VIP). 
+However an alternative is to let kubelet start it as a static pod.
+That needs a manifest which can be created 
+using the docker image and must be placed at /etc/kubernetes/manifests. 
+Those steps are done by 15-kube-vip.sh.
 
+The concise documentation for 
+[kube-vip-static](https://kube-vip.io/hybrid/static/)
+provided me the knowledge to set this up correctly 
 
-For anyone who is stuggling with this, this was resolved by updating kubeadm-config:
+*HINT* At the moment there is no glue that runs all scripts. Therefore this
+script needs to be sourced on execution - otherwise the 50-kubeadm_master.sh
+will fail (no Env $VIP, etc.)
 
-```
-kubectl -n kube-system edit cm kubeadm-config
-```
-
-and adding:
-
-```
-controlPlaneEndpoint: k8s01.dev.local:6443
-```
-
-e.g.
-
-```
-# Please edit the object below. Lines beginning with a '#' will be ignored,
-# and an empty file will abort the edit. If an error occurs while saving this file will be
-# reopened with the relevant failures.
-#
-apiVersion: v1
-data:
-  ClusterConfiguration: |
-    apiServer:
-      extraArgs:
-        authorization-mode: Node,RBAC
-      timeoutForControlPlane: 4m0s
-    apiVersion: kubeadm.k8s.io/v1beta2
-    certificatesDir: /etc/kubernetes/pki
-    clusterName: kubernetes
-    controlPlaneEndpoint: k8s01.dev.local:6443
-```
-
-regenrating the tokens and adding it back again. They key to this was as usual in the error message:
-unable to add a new control plane instance a cluster that doesn't have a stable controlPlaneEndpoint address
-So I provided a controlPlaneEndpoint address and it worked.
+*NOTE* May be an interesting alternative to kube-vib: 
+[porter](https://itnext.io/porter-an-open-source-load-balancer-designed-for-bare-metal-kubernetes-clusters-870e1313b7f0)
