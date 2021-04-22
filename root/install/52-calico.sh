@@ -5,7 +5,7 @@ CALICO_VER=latest
 CALICO_URL="https://docs.projectcalico.org/archive/v${CALICO_VER}/manifests"
 [ "X$CALICO_VER" == "Xlatest" ] && \
   CALICO_URL="https://docs.projectcalico.org/manifests"
-CALICO_DIR="0-calico"
+CALICO_DIR="/root/0-calico"
 
 FULLPATH="${CALICO_DIR}/overlays/${CALICO_VER}/calico"
 mkdir -p "${FULLPATH}"

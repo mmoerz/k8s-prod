@@ -28,6 +28,10 @@ apiServer:
     - 10.10.96.1
   extraArgs:
     authorization-mode: Node,RBAC
+controllerManager:
+  extraArgs:
+    cluster-signing-cert-file: /etc/kubernetes/pki/ca.crt
+    cluster-signing-key-file: /etc/kubernetes/pki/ca.key
 networking:
   dnsDomain: cluster.local
   podSubnet: 10.244.0.0/16
