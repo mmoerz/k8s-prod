@@ -22,6 +22,11 @@ sudo kubeadm init \
     --upload-certs \
     --config=$CFGFILE
 
+# copy admin configuration
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# untaint node for - remove restriction on control plane master
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
