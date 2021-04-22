@@ -1,2 +1,4 @@
 # k8s-prod
-kubernetes production setup scripts
+Setup scripts for a clearlinux based kubernetes cluster
+
+
