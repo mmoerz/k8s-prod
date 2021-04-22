@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# write increased limits to specified file
+function write_limits_conf() {
+        cat <<EOT | sudo bash -c "cat > $1"
+[Service]
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=1048576
+TimeoutStartSec=0
+MemoryLimit=infinity
+EOT
+}
+
 TZ=`timedatectl | grep -i 'Europe/Vienna'`
 if [ "X$TZ" == "X" ] ; then
   echo "setting timezone"
@@ -16,8 +28,27 @@ swupd update
 # cloud-control is necessary for docker
 # vim is my editor of choice (choose your own there)
 # jq is a nice to have admin tool
-swupd bundle-add cloud-native-basic cloud-control git jq vim
+swupd bundle-add cloud-native-basic cloud-control storage-utils git jq bc vim
 
+# increase max inotify watchers
+cat > /etc/sysctl.conf <<EOT
+fs.inotify.max_queued_events=1048576
+fs.inotify.max_user_watches=1048576
+fs.inotify.max_user_instances=1048576
+EOT
+sysctl -q -p
+
+# write configuration files
+sudo mkdir -p /etc/systemd/system/kubelet.service.d
+write_limits_conf "/etc/systemd/system/kubelet.service.d/limits.conf"
+if [ "$RUNNER" == "containerd" ]; then
+  sudo mkdir -p /etc/systemd/system/containerd.service.d
+  write_limits_conf "/etc/systemd/system/containerd.service.d/limits.conf"
+fi
+if [ "$RUNNER" == "crio" ]; then
+  sudo mkdir -p /etc/systemd/system/crio.service.d
+  write_limits_conf "/etc/systemd/system/crio.service.d/limits.conf"
+fi
 
 # stop docker, containerd
 systemctl stop docker
@@ -31,27 +62,6 @@ systemctl start crio.service
 # enable docker ??
 systemctl disable docker
 systemctl disalbe containerd
-
-# turn on ip_forward
-mkdir -p /etc/sysctl.d/
-
-tee /etc/sysctl.d/99-kubernetes-cri.conf > /dev/null <<EOF
-net.bridge.bridge-nf-call-iptables  = 1
-net.ipv4.ip_forward                 = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-EOF
-sysctl --system
-
-# add hostname to /etc/hosts
-#HOSTNAME=`hostname`
-#if [ ! -e /etc/hosts ] ; then
-#  echo "127.0.0.1 localhost $HOSTNAME" | sudo tee /etc/hosts
-#else
-#  CONTAINS=`grep -i $HOSTNAME /etc/hosts`
-#  if [ "X$CONTAINS" == "X" ] ; then
-#    echo "127.0.0.1 localhost $HOSTNAME" | sudo tee --append /etc/hosts
-#  fi
-#fi
 
 # finally prepare for kubernetes
 #/usr/share/clr-k8s-examples/setup_system.sh
