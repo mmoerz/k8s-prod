@@ -1,0 +1,12 @@
+site_name: My Kubernetes Docs
+nav:
+  - Home: index.md
+  - OS: 
+    - clearlinux_install.md
+    - clearlinux.md
+  - Kubernetes:
+    - kube_arch.md
+    - kube_prep.md
+    - kube_config.md
+    - kube_controlplane.md
+    - kube_cmds.md

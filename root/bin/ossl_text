@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+cat <<EOF
+USAGE: $0 <pemfile>
+  pemfile (.cer, .pub - pem format certificate)
+EOF
+exit 1
+fi
+
+openssl x509 -in $1 -text | less

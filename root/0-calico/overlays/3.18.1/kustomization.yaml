@@ -1,0 +1,5 @@
+resources:
+  - calico/calico.yaml
+
+patchesStraticMerge:
+  - patch_configmap.yaml

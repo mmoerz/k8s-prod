@@ -1,0 +1,32 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+# Allowing for CPU pinning and isolation in case of guaranteed QoS class
+cpuManagerPolicy: static
+systemReserved:
+  cpu: 500m
+  memory: 256M
+kubeReserved:
+  cpu: 500m
+  memory: 256M
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.19.0
+clusterName: middleearth
+controlPlaneEndpoint: "10.10.96.1:8443"
+apiServer:
+  certSANs:
+    - 10.10.100.1
+    - 10.10.100.2
+    - 10.10.100.3
+    - 10.10.96.1
+  extraArgs:
+    authorization-mode: Node,RBAC
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/12
