@@ -21,10 +21,10 @@ fi
 
 cp "config/$HOST/clr-installer.yaml" root/.
 
-tar -cz --dereference -f kubernetes_scripts.tbz2 \
+tar -cz --dereference -f kubernetes_scripts.tgz \
   root \
   etc 
-scp kubernetes_scripts.tbz2 $1:.
+scp kubernetes_scripts.tgz $1:.
 #ssh $1 sudo cp kubernetes_scripts.tbz2 /root/.
 
 #cleanup

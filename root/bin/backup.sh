@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DESTFILE=install_kubernetes_$HOSTNAME.tbz2
+DESTFILE=install_kubernetes_$HOSTNAME.tgz
 
 partx -s /dev/sda 1>&2 > /root/partitions_partx.txt
 

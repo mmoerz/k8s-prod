@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SRCFILE=kubernetes_scripts.tbz2
+SRCFILE=kubernetes_scripts.tgz
 
 USER=`cat /etc/passwd | grep 1000 | cut -f1 -d':'` 
 SRC="/home/${USER}/${SRCFILE}"
