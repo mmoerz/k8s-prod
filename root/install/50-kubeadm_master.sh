@@ -12,6 +12,7 @@ fi
 # example was 1.19.0
 VERSION=1.19.7
 CFGFILE=/root/kubeadm.yaml
+CFGFILE=/root/kubeadm-withsigner.yaml
 
 sed -i -e "s/\(kubernetesVersion: v\)[0-9\.]\+/\1$VERSION/" $CFGFILE
 sed -i -e "s/\(controlPlaneEndpoint: \"\)[a-zA-Z0-9_:\.\-]\+\"/\1$VIP:$VPORT\"/" $CFGFILE
