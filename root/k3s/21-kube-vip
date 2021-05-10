@@ -1,0 +1,85 @@
+#!/bin/bash
+
+export VIP=10.10.96.1
+export INTERFACE=enp0s25
+
+export KUBEVIP_IMAGE="docker.io/plndr/kube-vip:0.3.4"
+
+#crictl pull ${KUBEVIP_IMAGE}
+
+FOUND_ALIAS=`grep kube-vip ~/.bash_profile`
+ALIAS_CMD="ctr run --rm --net-host ${KUBEVIP_IMAGE} vip /kube-vip"
+if [ "X$FOUND_ALIAS" == "X" ] ; then
+	echo 'alias kube-vip="ctr run --rm --net-host '${KUBEVIP_IMAGE}' vip /kube-vip"' >> \
+		~/.bash_profile
+fi
+
+KUBE_VIP="ctr run --rm --net-host ${KUBEVIP_IMAGE} vip /kube-vip"
+source ~/.bash_profile
+alias
+
+# runc pull of container
+#crictl pull docker.io/plndr/kube-vip:0.3.2
+# cat > podconfig.yaml <<EOF
+# {
+#     "metadata": {
+#         "name": "kube-vip",
+#         "namespace": "default",
+#         "attempt": 1,
+#         "uid": "hdishd83djaidwnduwk28bcsb"
+#     },
+#     "log_directory": "/tmp",
+#     "linux": {
+#     }
+# }
+# EOF
+# cat > container.yaml <<EOF
+# {
+#   "metadata": {
+#       "name": "kube-vip-setup"
+#   },
+#   "image":{
+#       "image": "${KUBEVIP_IMAGE}"
+#   },
+#   "command": [
+#       "top"
+#   ],
+#   "log_path":"busybox.log",
+#   "linux": {
+#   }
+# }
+# EOF
+
+#containerd is simpler to get and execute
+#systemctl start containerd
+FOUND_IMAGE=$(ctr images list | grep -i ${KUBEVIP_IMAGE} | wc -l)
+echo $FOUND_IMAGE
+if [ "X${FOUND_IMAGE}" != "X1" ] ; then
+	ctr images pull ${KUBEVIP_IMAGE}
+fi
+
+export KUBEVIP_CFG=/var/lib/rancher/k3s/server/manifests/kube-vip.yaml
+KUBEVIP_CFGDIR=`dirname ${KUBEVIP_CFG}`
+[ ! -d "${KUBEVIP_CFGDIR}" ] && mkdir -p "${KUBEVIP_CFGDIR}"
+
+${KUBE_VIP} manifest daemonset \
+	--arp \
+	--interface $INTERFACE \
+	--address $VIP \
+	--controlplane \
+	--services \
+	--leaderElection \
+  --taint \
+	--inCluster | tee ${KUBEVIP_CFG}
+
+echo "fixing yaml"
+OP_FOUND=`grep operator ${KUBEVIP_CFG}`
+if [ "X$OP_FOUND" = "X" ] ; then
+	sed -i "/serviceAccountName: kube-vip/a       tolerations:\n      - effect: NoSchedule\n        key: node-role.kubernetes.io/master\n        operator: Exists" ${KUBEVIP_CFG}
+	sed -i "s/^\(tolerations:\)/      \1/" ${KUBEVIP_CFG}
+fi
+echo "config file: ${KUBEVIP_CFG}"
+
+#ctr images remove docker.io/plndr/kube-vip:0.3.2
+#systemctl stop containerd
+# systemctl enable containerd

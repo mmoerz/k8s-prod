@@ -1,0 +1,91 @@
+#!/bin/bash
+
+K3SVERSION='v1.21.0+k3s1'
+K3SBIN=/usr/local/bin/k3s
+K3SCFG=/etc/rancher/k3s/config.yaml
+
+[ ! -d /usr/local/bin ] && mkdir -p /usr/local/bin
+
+if [ -f "${K3SBIN}" ] ; then
+	echo "k3s is installed: ${K3SBIN}"
+	echo -ne "checking version"
+	INST_VERSION=`${K3SBIN} --version | sed -ne 's/.*v\([0-9\.+ksrc\-]\+\).*/\1/p'`
+	if [ "Xv$INST_VERSION" != "X$K3SVERSION" ] ; then
+		echo -ne "\nVersion missmatch: requested>$K3SVERSION<\n"
+		echo "                   installed>$INST_VERSION"
+		FOUND_K3S='false'
+	fi
+	echo "... ok ($K3SVERSION)"
+else
+	FOUND_K3S='false'
+fi
+
+if [ "X$FOUND_K3S" == "Xfalse" ] ; then
+	echo "${K3SBIN} is not installed, downloading"
+	curl -L "https://github.com/k3s-io/k3s/releases/download/${K3SVERSION}/k3s" -o ${K3SBIN}
+	chmod u+x ${K3SBIN}
+fi
+
+curl -sfL https://get.k3s.io -o k3inst
+export INSTALL_K3S_SKIP_START=true
+export INSTALL_K3S_CHANNEL=testing
+
+if [ -f ${K3SCFG} ] ; then
+	echo "k3s config file exist: ${K3SCFG}"
+else
+	echo "installing k3s config file: "
+	mkdir -p /etc/rancher/k3s/
+	cat > ${K3SCFG} <<EOF
+write-kubeconfig-mode: "0644"
+tls-san:
+  - "10.10.96.1"
+cluster-cidr:
+  - "10.42.0.0/16"
+node-label:
+  - "foo=bar"
+  - "something=amazing"
+disable:
+  - servicelb
+node-taint:
+  - "node-role.kubernetes.io/master=true:NoSchedule"
+token:
+  - "Sumse43g53If.3_453jasdfEAFn"
+flannel-backend:
+  - "host-gw"
+EOF
+fi
+
+check_binary_replace()
+{
+	BINARY=$1
+	if [ "X$BINARY" == "X" ] ; then
+		echo binary missing
+		return
+	fi
+	
+	BINARY_PATH=$(which ${BINARY})
+	if [ "X${BINARY_PATH}" != "X" ] ; then
+		BINARY_DIR=$(dirname ${BINARY_PATH})
+		BINARY_ISLOCAL=$(echo ${BINARY_DIR} | grep -i "/usr/local/")
+		if [ "X${BINARY_ISLOCAL}" == "X" ] ; then
+			echo "BIN: ${BINARY} at path: ${BINARY_PATH}"
+			echo "saving binary to .${BINARY_PATH}.bak"
+			mv "${BINARY_PATH}" "${BINARY_PATH}.bak"
+			ln -s ${K3SBIN} "/usr/local/bin/${BINARY}"
+		fi
+	else
+		echo "${BINARY} not found, installing as link to ${K3SBIN}"
+		ln -s ${K3SBIN} "/usr/local/bin/${BINARY}"
+		BINARY_PATH=$(which ${BINARY})
+	fi
+
+	BINARY_PATH=$(which ${BINARY})
+	LINKED_TO=`ls -la "${BINARY_PATH}" | sed -e 's/.*>\s\+\(.*\)/\1/'`
+	if [ -L "${BINARY_PATH}" ] ; then
+		echo "LINK: ${BINARY} at path: ${BINARY_PATH} to ${LINKED_TO}"
+	fi
+}
+
+check_binary_replace 'kubectl'
+check_binary_replace 'ctr'
+check_binary_replace 'crictl'

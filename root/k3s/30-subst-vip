@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "replacing apiserver address with VIP"
+sed -i 's%server: https://\(.*\)%10.10.96.1%' /etc/rancher/k3s/k3s.yaml
+

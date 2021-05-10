@@ -3,9 +3,9 @@
 curl -s https://kube-vip.io/manifests/rbac.yaml > \
   /etc/kubernetes/manifests/kube-vip-rbac.yaml
 
-export VIP=10.10.96.1
-export VPORT=6443
-export INTERFACE=enp0s25
+export VIP="${K8S_VIP:-10.10.96.1}"
+export VPORT="${K8S_VPORT:-6443}"
+export INTERFACE="${K8S_INTERFACE:-enp0s25}"
 
 echo "pulling docker image using crio"
 crictl pull docker.io/plndr/kube-vip:0.3.2

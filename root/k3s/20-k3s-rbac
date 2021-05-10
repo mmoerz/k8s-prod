@@ -1,0 +1,22 @@
+#!/bin/bash
+
+K3SRBACFILE="/var/lib/rancher/k3s/server/manifests/kube-vip-rbac.yaml"
+
+K3SRBACDIR=`dirname "${K3SRBACFILE}"`
+[ ! -d "${K3SRBACDIR}" ] && mkdir -p "${K3SRBACDIR}"
+if [ ! -f "${K3SRBACFILE}" ] ; then
+	curl -s https://kube-vip.io/manifests/rbac.yaml -o "${K3SRBACFILE}"
+fi
+
+echo -ne "checking for coordination in ${K3SRBACFILE}"
+FOUND=$(grep coordination.k8s.io "${K3SRBACFILE}")
+
+if [ "X$FOUND" == "X" ]; then
+	echo " ... not found"
+	exit 1
+fi
+
+echo " ... found"
+
+echo "applying ${K3SRBACFILE}"
+kubectl apply -f "${K3SRBACFILE}"

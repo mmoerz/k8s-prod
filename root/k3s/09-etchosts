@@ -1,0 +1,22 @@
+#!/bin/bash
+
+HNAME=$(hostname)
+
+if [ ! -f /etc/hosts ] ; then
+  echo -ne "/etc/hosts missing "
+cat > /etc/hosts <<EOF
+127.0.0.1 ${HNAME}
+EOF
+  echo "... created"
+else 
+  echo "/etc/host exists"
+fi
+
+HFOUND=$(grep ${HNAME} /etc/hosts | wc -l)
+if [ "X${HFOUND}" == "X" ] ; then
+  echo -ne "/etc/hosts doesn't contain ${HNAME} "
+  cat >> /etc/hosts <<EOF
+127.0.0.1 ${HNAME}
+EOF
+  echo "... added 127.0.0.1 ${HNAME}"
+fi

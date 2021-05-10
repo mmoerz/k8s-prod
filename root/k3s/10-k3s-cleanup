@@ -1,0 +1,8 @@
+#!/bin/bash
+
+DELDIRS="/run/flannel /var/lib/rancher/k3s /var/lib/kubelet /etc/cni/net.d /root/.kube"
+
+for dir in $DELDIRS; do
+	echo deleting $dir
+	rm -rf $dir
+done
