@@ -10,9 +10,10 @@ systemctl mask tallow.service
 ```
 
 ## systemd vs. NetworManager
-I really love pointing out the funny workings of nm.
-In order to avoid unecessary problems I utilize a static network config with 
-systemd.
+** Note: This is my opinion - ignore it if you don't like it. **
+In my experience nm simply overcomplicates matters.
+Therefore I normally remove it and replace it with a simple static 
+configuration, which is beneficial in regards to debugging issues.
 
 /etc/systemd/network/10-enp0s25.network
 ```
@@ -80,3 +81,8 @@ fi
 # mask it anyway because it pops up like a little pest
 systemctl mask var-swapfile.swap
 ```
+
+# additional stuff to think about
+* Setting up the correct timezone
+* adding an /etc/hosts entry
+* 

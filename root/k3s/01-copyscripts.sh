@@ -1,0 +1,1 @@
+../install/01-copyscripts.sh
