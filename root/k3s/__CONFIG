@@ -1,0 +1,5 @@
+VIP=10.10.96.1
+
+# Environment variables used by k3s
+K3S_SECRET="Sumse43g53If.3_453jasdfEAFn"
+K3S_URL=https://${VIP}:6443 
