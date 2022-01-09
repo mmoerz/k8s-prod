@@ -1,1 +1,0 @@
-../install/09-hostname.sh

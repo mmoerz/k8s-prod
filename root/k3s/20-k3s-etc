@@ -89,3 +89,4 @@ check_binary_replace()
 check_binary_replace 'kubectl'
 check_binary_replace 'ctr'
 check_binary_replace 'crictl'
+
