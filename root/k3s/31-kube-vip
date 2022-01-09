@@ -4,6 +4,7 @@ export VIP=10.10.96.1
 export INTERFACE=enp0s25
 
 export KUBEVIP_IMAGE="docker.io/plndr/kube-vip:0.3.4"
+export KUBEVIP_IMAGE="docker.io/plndr/kube-vip:v0.4.1"
 
 #crictl pull ${KUBEVIP_IMAGE}
 

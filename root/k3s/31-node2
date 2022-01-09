@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source ./__CONFIG
+k3s server --server https://${VIP}:6443
+

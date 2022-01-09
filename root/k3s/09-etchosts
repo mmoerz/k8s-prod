@@ -12,8 +12,8 @@ else
 fi
 
 HFOUND=$(grep ${HNAME} /etc/hosts | wc -l)
-if [ "X${HFOUND}" == "X" ] ; then
+if [ ${HFOUND} -lt 1 ] ; then
   echo -ne "/etc/hosts doesn't contain ${HNAME} "
-  sed "/^127\.0\.0\.1/{h;s/\(.*\)/\1 ${HNAME}/};\${x;/^$/{s//127.0.0.1 localhost ${HNAME}/;H};x}" /etc/hosts
+  sed -i "/^127\.0\.0\.1/{h;s/\(.*\)/\1 ${HNAME}/};\${x;/^$/{s//127.0.0.1 localhost ${HNAME}/;H};x}" /etc/hosts
   echo "... added 127.0.0.1 localhost ${HNAME}"
 fi

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CFGDIR=/etc/containerd
+RUNDIR=/run/k3s/containerd
+
+systemctl stop containerd
+
+[ -d ${CFGDIR} ] || mkdir ${CFGDIR}
+cp ressources/containerd_config.toml ${CFGDIR}/config.toml
+
+# potentially hiding a disaster ...
+mkdir -p ${RUNDIR}
+
+systemctl start containerd
