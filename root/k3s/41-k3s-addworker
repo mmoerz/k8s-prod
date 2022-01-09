@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source ./__CONFIG
+k3s agent --server https://${VIP}:6443 

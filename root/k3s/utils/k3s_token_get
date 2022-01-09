@@ -1,0 +1,6 @@
+#!/bin/bash
+
+K3STOKENSTORE=/var/lib/rancher/k3s/server/token
+echo k3 token stored in ${K3STOKENSTORE}
+
+sed -e 's/.*server:\(.*\)/\1/' ${K3STOKENSTORE}

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+SCRIPTNAME=`basename $0`
+SCRIPTPATH=`dirname $0`
+BASEPATH="$SCRIPTPATH/.."
+
+echo ${SCRIPTNAME} ${SCRIPTPATH} 
+
+pushd $BASEPATH
+
 if [ $# -ne 1 ]; then
 cat <<EOF
 usage: $0 hostname
@@ -32,4 +40,6 @@ if [ "X$LINKEDETC" == "X1" ] ; then
   rm etc
   rm root/clr-installer.yaml
 fi
+
+popd
 
