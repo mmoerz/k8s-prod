@@ -4,7 +4,7 @@ SCRIPTNAME=`basename $0`
 SCRIPTPATH=`dirname $0`
 BASEPATH="$SCRIPTPATH/.."
 
-echo ${SCRIPTNAME} ${SCRIPTPATH} 
+#echo ${SCRIPTNAME} ${SCRIPTPATH} 
 
 pushd $BASEPATH
 

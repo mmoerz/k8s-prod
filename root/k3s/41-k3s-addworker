@@ -1,4 +1,7 @@
 #!/bin/bash
 
 source ./__CONFIG
-k3s agent --server https://${VIP}:6443 
+
+echo $K3S_TOKEN
+
+k3s agent --token $K3S_TOKEN --server $K3S_URL 

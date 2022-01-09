@@ -1,5 +1,8 @@
 VIP=10.10.96.1
+K3S_SECRET="Sumse43g53If.3_453jasdfEAFn"
 
 # Environment variables used by k3s
-K3S_SECRET="Sumse43g53If.3_453jasdfEAFn"
-K3S_URL=https://${VIP}:6443 
+K3S_TOKEN=${K3S_SECRET}
+K3S_URL=https://${VIP}:6443
+# used to register new agent nodes
+K3S_AGENT_TOKEN="t324AF4fvg.521?_35&5324534"
