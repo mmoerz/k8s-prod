@@ -2,6 +2,5 @@
 
 source ./__CONFIG
 
-echo $K3S_TOKEN
 
 k3s agent --token $K3S_TOKEN --server $K3S_URL 
