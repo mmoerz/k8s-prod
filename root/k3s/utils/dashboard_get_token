@@ -1,2 +1,7 @@
 #!/bin/bash
+echo token is:
 k3s kubectl -n kubernetes-dashboard describe secret admin-user-token | grep '^token'
+cat <<EOF
+
+HINT> don't forget to copy /etc/ranchter/k3s/k3s.yaml to .kube/config !
+EOF

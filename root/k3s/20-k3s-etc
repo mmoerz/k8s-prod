@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./__CONFIG
+
 K3SVERSION='v1.23.1+k3s1'
 K3SBIN=/usr/local/bin/k3s
 K3SCFG=/etc/rancher/k3s/config.yaml
@@ -38,7 +40,7 @@ else
 	cat > ${K3SCFG} <<EOF
 write-kubeconfig-mode: "0644"
 tls-san:
-  - "10.10.96.1"
+  - "${VIP}"
 cluster-cidr:
   - "10.42.0.0/16"
 node-label:
@@ -49,7 +51,9 @@ disable:
 node-taint:
   - "node-role.kubernetes.io/master=true:NoSchedule"
 token:
-  - "Sumse43g53If.3_453jasdfEAFn"
+  - "${K3S_TOKEN}"
+agent-token:
+  - "${K3S_AGENT_TOKEN}"
 flannel-backend:
   - "host-gw"
 EOF

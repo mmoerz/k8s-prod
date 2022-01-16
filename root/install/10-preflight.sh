@@ -61,7 +61,7 @@ systemctl start crio.service
 
 # enable docker ??
 systemctl disable docker
-systemctl disalbe containerd
+systemctl disable containerd
 
 # finally prepare for kubernetes
 #/usr/share/clr-k8s-examples/setup_system.sh
