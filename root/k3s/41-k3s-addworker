@@ -2,5 +2,13 @@
 
 source ./__CONFIG
 
+K3SSERVICEENV=/etc/systemd/system/k3s.service.env
 
-k3s agent --token $K3S_TOKEN --server $K3S_URL 
+mkdir -p `basename ${K3SSERVICEENV}`
+
+cp resources/k3s.service.env-agent ${K3SSERVICEENV}
+
+# substitute server address in k3s configuration
+sed -i "s%\(server: https://\).*%\1${VIP}:6443%" /etc/rancher/k3s/k3s.yaml
+
+#k3s agent --token $K3S_TOKEN --server $K3S_URL 

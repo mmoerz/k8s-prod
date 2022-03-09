@@ -6,3 +6,9 @@ for dir in $DELDIRS; do
 	echo deleting $dir
 	rm -rf $dir
 done
+
+systemctl stop k3s.service
+
+rm -f /etc/systemd/system/k3s.service*
+systemctl daemon-reload
+

@@ -4,16 +4,10 @@ source ./__CONFIG
 
 K3SSERVICEENV=/etc/systemd/system/k3s.service.env
 
-if [ -f ${K3SSERVICEENV} ] ; then
-  echo "k3s systemd service env file exists: ${K3SSERVICEENV}"
-else
-  echo "installing k3s systemd service env file: "
-  mkdir -p `basename "${K3SSERVICEENV}"`
-  cat > ${K3SSERVICEENV} <<EOF
-CMD_K3S_EXEC="server"
-EOF
-fi
+mkdir -p `basename ${K3SSERVICEENV}`
+
+cp resources/k3s.service.env-server ${K3SSERVICEENV}
 
 systemctl enable k3s.service
-systemctl start k3s.service
-
+#systemctl start k3s.service
+echo K3S_TOKEN=$K3S_TOKEN k3s server --cluster-init

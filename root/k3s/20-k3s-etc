@@ -28,14 +28,16 @@ if [ "X$FOUND_K3S" == "Xfalse" ] ; then
 	chmod u+x ${K3SBIN}
 fi
 
-curl -sfL https://get.k3s.io -o k3inst
+# not needed
+#curl -sfL https://get.k3s.io -o k3inst
+
 export INSTALL_K3S_SKIP_START=true
 export INSTALL_K3S_CHANNEL=testing
 
 if [ -f ${K3SCFG} ] ; then
 	echo "k3s config file exist: ${K3SCFG}"
 else
-	echo "installing k3s config file: "
+	echo "installing k3s config file: ${K3SCFG}"
 	mkdir -p /etc/rancher/k3s/
 	cat > ${K3SCFG} <<EOF
 write-kubeconfig-mode: "0644"

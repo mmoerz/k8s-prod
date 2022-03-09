@@ -1,0 +1,7 @@
+#!/bin/bash
+
+NAME=`kubectl -n kube-system get secret \
+     | grep deployment-controller-token \
+     | sed -e 's/\([a-z0-9-]*\).*/\1/'`
+echo $NAME
+kubectl -n kube-system describe secret $NAME
